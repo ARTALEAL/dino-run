@@ -1,3 +1,5 @@
+import Player from './player';
+
 const canvas = document.getElementById('game');
 const ctx = canvas.getContext('2d');
 
@@ -8,13 +10,31 @@ const PLAYER_HEIGHT = 94 / 1.5;
 const MAX_JUMP_HEIGHT = GAME_HEIGHT;
 const MIN_JUMP_HEIGHT = 150;
 
+//Game Objects
+let player = null;
 let scaleRatio = null;
 let previousTime = null;
+
+function createSprites() {
+  const playerWidthInGame = PLAYER_WIDTH * scaleRatio;
+  const playerHeightInGame = PLAYER_HEIGHT * scaleRatio;
+  const minJumpInGame = MIN_JUMP_HEIGHT * scaleRatio;
+  const maxJumpInGame = MAX_JUMP_HEIGHT * scaleRatio;
+  player = new Player(
+    ctx,
+    playerWidthInGame,
+    playerHeightInGame,
+    minJumpInGame,
+    maxJumpInGame,
+    scaleRatio
+  );
+}
 
 function setScreen() {
   scaleRatio = getScaleRatio();
   canvas.width = GAME_WIDTH * scaleRatio;
   canvas.height = GAME_HEIGHT * scaleRatio;
+  createSprites();
 }
 
 setScreen();
