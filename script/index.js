@@ -1,4 +1,4 @@
-import Player from './player';
+import Player from './Player.js';
 
 const canvas = document.getElementById('game');
 const ctx = canvas.getContext('2d');
@@ -74,6 +74,10 @@ function gameLoop(currentTime) {
   const frameTimeDelta = currentTime - previousTime;
   previousTime = currentTime;
   clearScreen();
+  //Update game objects
+
+  //Draw game objects
+  player.draw();
   requestAnimationFrame(gameLoop);
 }
 
