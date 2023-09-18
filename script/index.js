@@ -94,6 +94,7 @@ function gameLoop(currentTime) {
   clearScreen();
   //Update game objects
   ground.update(gameSpeed, frameTimeDelta);
+  player.update(gameSpeed, frameTimeDelta);
 
   //Draw game objects
   ground.draw();
