@@ -1,6 +1,7 @@
 import Player from './Player.js';
 import Ground from './Ground.js';
 import CactiController from './CactiController.js';
+import Score from './Score.js';
 
 const canvas = document.getElementById('game');
 const ctx = canvas.getContext('2d');
@@ -31,6 +32,9 @@ let scaleRatio = null;
 let previousTime = null;
 let gameSpeed = GAME_SPEED_START;
 let gameOver = false;
+let hasAddedEventListenersForRestart = false;
+let waitiningToStart = true;
+let score = null;
 
 function createSprites() {
   const playerWidthInGame = PLAYER_WIDTH * scaleRatio;
@@ -39,6 +43,7 @@ function createSprites() {
   const maxJumpInGame = MAX_JUMP_HEIGHT * scaleRatio;
   const groundWidthInGame = GROUND_WIDTH * scaleRatio;
   const groundHeightInGame = GROUND_HEIGHT * scaleRatio;
+
   player = new Player(
     ctx,
     playerWidthInGame,
@@ -47,6 +52,7 @@ function createSprites() {
     maxJumpInGame,
     scaleRatio
   );
+
   ground = new Ground(
     ctx,
     groundWidthInGame,
@@ -64,12 +70,15 @@ function createSprites() {
       height: cactus.height * scaleRatio,
     };
   });
+
   cactiController = new CactiController(
     ctx,
     cactiImages,
     scaleRatio,
     GROUND_AND_CACTUS_SPEED
   );
+
+  score = new Score(ctx, scaleRatio);
 }
 
 function setScreen() {
@@ -102,6 +111,48 @@ function getScaleRatio() {
   }
 }
 
+function showGameOver() {
+  const fontSize = 70 * scaleRatio;
+  ctx.font = `${fontSize}px Verdana`;
+  ctx.fillStyle = 'grey';
+  const x = canvas.width / 4.5;
+  const y = canvas.height / 2;
+  ctx.fillText('GAME OVER', x, y);
+}
+
+function setUpGameReset() {
+  if (!hasAddedEventListenersForRestart) {
+    hasAddedEventListenersForRestart = true;
+    setTimeout(() => {
+      window.addEventListener('keyup', reset, { once: true });
+      window.addEventListener('touchstart', reset, { once: true });
+    }, 1000);
+  }
+}
+
+function reset() {
+  hasAddedEventListenersForRestart = false;
+  gameOver = false;
+  waitiningToStart = false;
+  ground.reset();
+  cactiController.reset();
+  score.reset();
+  gameSpeed = GAME_SPEED_START;
+}
+
+function showStartGameText() {
+  const fontSize = 40 * scaleRatio;
+  ctx.font = `${fontSize}px Verdana`;
+  ctx.fillStyle = 'grey';
+  const x = canvas.width / 14;
+  const y = canvas.height / 2;
+  ctx.fillText('Тачскрин или пробел для старта', x, y);
+}
+
+function updateGameSpeed(frameTimeDelta) {
+  gameSpeed += frameTimeDelta * GAME_SPEED_INCREMENT;
+}
+
 function clearScreen() {
   ctx.fillStyle = 'white';
   ctx.fillRect(0, 0, canvas.width, canvas.height);
@@ -116,20 +167,34 @@ function gameLoop(currentTime) {
   const frameTimeDelta = currentTime - previousTime;
   previousTime = currentTime;
   clearScreen();
-  if (!gameOver) {
+  if (!gameOver && !waitiningToStart) {
     //Update game objects
     ground.update(gameSpeed, frameTimeDelta);
     cactiController.update(gameSpeed, frameTimeDelta);
     player.update(gameSpeed, frameTimeDelta);
+    score.update(frameTimeDelta);
+    updateGameSpeed(frameTimeDelta);
   }
   if (!gameOver && cactiController.collideWith(player)) {
     gameOver = true;
+    setUpGameReset();
+    score.setHighScore();
   }
   //Draw game objects
   ground.draw();
   cactiController.draw();
   player.draw();
+  score.draw();
+  if (gameOver) {
+    showGameOver();
+  }
+  if (waitiningToStart) {
+    showStartGameText();
+  }
   requestAnimationFrame(gameLoop);
 }
 
 requestAnimationFrame(gameLoop);
+
+window.addEventListener('keyup', reset, { once: true });
+window.addEventListener('touchstart', reset, { once: true });
