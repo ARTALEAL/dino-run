@@ -12,6 +12,7 @@ export default class Ground {
 
     this.groundImage = new Image();
     this.groundImage.src = '../dino-run/images/ground.png';
+    // this.groundImage.src = '../images/ground.png';
   }
 
   update(gameSpeed, frameTimeDelta) {
