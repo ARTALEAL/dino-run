@@ -19,9 +19,21 @@ const GROUND_WIDTH = 2400;
 const GROUND_HEIGHT = 24;
 const GROUND_AND_CACTUS_SPEED = 0.5;
 const CACTI_CONFIG = [
-  { width: 48 / 1.5, height: 100 / 1.5, image: '../images/cactus_1.png' },
-  { width: 98 / 1.5, height: 100 / 1.5, image: '../images/cactus_2.png' },
-  { width: 68 / 1.5, height: 70 / 1.5, image: '../images/cactus_3.png' },
+  {
+    width: 48 / 1.5,
+    height: 100 / 1.5,
+    image: '../dino-run/images/cactus_1.png',
+  },
+  {
+    width: 98 / 1.5,
+    height: 100 / 1.5,
+    image: '../dino-run/images/cactus_2.png',
+  },
+  {
+    width: 68 / 1.5,
+    height: 70 / 1.5,
+    image: '../dino-run/images/cactus_3.png',
+  },
 ];
 
 //Game Objects
